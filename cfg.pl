@@ -12,7 +12,7 @@ $pcfg->addRule("VP_SING", ["IV_SING", ["TV_SING", "NP"]], [1, 9]);
 $pcfg->addRule("VP_PL", ["IV_PL", ["TV_PL", "NP"]], [1, 9]);
 $pcfg->addRule("DET_SING", ["a", "the", "this"], [2, 7, 1]);
 $pcfg->addRule("DET_PL", ["the", "these", "those", "some"], [6, 1, 1, 2]);
-$pcfg->addRule("NP", ["NP_SING", "NP_PL"], [5, 5]);
+$pcfg->addRule("NP", ["NP_SING", "NP_PL"]);
 $pcfg->addRule("N_SING", ["duckling", "piano", "cat", "spy", "robot", "cake"], [1, 1, 2, 4, 3, 2]);
 $pcfg->addRule("N_PL", ["ducklings", "pianos", "cats", "spies", "robots", "cakes"], [1, 1, 2, 4, 3, 2]);
 $pcfg->addRule("ADJ", ["purple", "mean", "clever", "big", "lost"], [1, 2, 4, 4, 2]);
@@ -26,4 +26,11 @@ for (1..10){
     @fnord = $pcfg->generateFrom("S");
     $story = $story.ucfirst("@fnord. ");
 }
-print "$story";
+print "$story\n";
+$pcfg->observe("DET_SING", "this", 100);
+$story = "";
+for (1..10){
+    @fnord = $pcfg->generateFrom("S");
+    $story = $story.ucfirst("@fnord. ");
+}
+print "$story\n";

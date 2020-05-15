@@ -1,10 +1,12 @@
 package ProbCFG;  # probabilistic context-free grammar
 
+use List::MoreUtils qw(first_index);
+
 require Exporter;
 
 @ISA = qw(Exporter);
 
-@EXPORT = qw(addRule, generateFrom);
+@EXPORT = qw(addRule, generateFrom, observe);
 
 sub new {
     my $this = {};
@@ -16,8 +18,8 @@ sub addRule {
     my $this = shift;
     my $lhs = $_[0];
     my $outs = $_[1];
-    my $probs = $_[2];
-    $this->{$lhs} = Math::Random::Discrete->new($probs, $outs);
+    my $probs = $_[2] // [(1) x scalar @$outs];
+    $this->{$lhs} = [$probs, $outs];
 }
 
 sub generateFrom {
@@ -31,7 +33,12 @@ sub generateFrom {
             $i++;
             next;
         }
-        $options = $this->{$word};
+        $outputs = $this->{$word};
+        $options = $outputs->[2];
+        if (!( defined $options)){
+           $options = Math::Random::Discrete->new(@$outputs[0], @$outputs[1]);
+           $this->{$word}->[2] = $options
+        }
         $replacement = $options->rand;
         if (ref($replacement) eq 'ARRAY'){
             splice(@sentence, $i, 1, @$replacement);
@@ -41,6 +48,18 @@ sub generateFrom {
         
     }
     return (@sentence);
+}
+
+sub observe {
+    my $this = shift;
+    my $input = @_[0];
+    my $output = @_[1];
+    my $freq = @_[2] // 1;
+    $probs = $this->{$input}->[0];
+    $all_items = $this->{$input}->[1];
+    $index = first_index { $_ eq $output } @$all_items;
+    $probs->[$index]+=$freq;
+    $this->{$input}->[2] = undef;
 }
 
 1;
