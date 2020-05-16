@@ -1,5 +1,3 @@
-use Math::Random::Discrete;
-
 use lib 'S:\Programming fun\perl\story generator';
 
 use ProbCFG;
@@ -21,13 +19,6 @@ $pcfg->addRule("IV_PL", ["ski", "study", "cry", "think", "laugh"], [1, 2, 4, 3, 
 $pcfg->addRule("TV_SING", ["likes", "hits", "jumps over", "suprises", "murders", "watches", "greets"], [1, 1, 1, 2, 3, 4, 1]);
 $pcfg->addRule("TV_PL", ["like", "hit", "jump over", "surprise", "murder", "watch", "greet"], [1, 1, 1, 2, 3, 4, 1]);
 
-$story = "";
-for (1..10){
-    @fnord = $pcfg->generateFrom("S");
-    $story = $story.ucfirst("@fnord. ");
-}
-print "$story\n";
-$pcfg->observe("DET_SING", "this", 100);
 $story = "";
 for (1..10){
     @fnord = $pcfg->generateFrom("S");
