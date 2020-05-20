@@ -3,13 +3,15 @@ use lib 'S:\Programming fun\perl\story generator';
 use ProbCFG;
 
 my $pcfg = ProbCFG->new();
-$pcfg->addRule("S", [["NP_SING", "VP_SING"], ["NP_PL", "VP_PL"]], [7, 3]);
+$pcfg->addRule("S", ["SIMPLE", ["SIMPLE", "CONJ", "SIMPLE"]], [20, 1]);
+$pcfg->addRule("SIMPLE", [["NP_SING", "VP_SING"], ["NP_PL", "VP_PL"]], [7, 3]);
 $pcfg->addRule("NP_SING", [["DET_SING", "ADJ", "N_SING"], ["DET_SING", "N_SING"]], [3, 7]);
 $pcfg->addRule("NP_PL", [["DET_PL", "ADJ", "N_PL"], ["DET_PL", "N_PL"]], [3, 7]);
 $pcfg->addRule("VP_SING", ["IV_SING", ["TV_SING", "NP"]], [1, 9]);
 $pcfg->addRule("VP_PL", ["IV_PL", ["TV_PL", "NP"]], [1, 9]);
 $pcfg->addRule("DET_SING", ["a", "the", "this"], [2, 7, 1]);
 $pcfg->addRule("DET_PL", ["the", "these", "those", "some"], [6, 1, 1, 2]);
+$pcfg->addRule("CONJ", ["and", "while", "so"]);
 $pcfg->addRule("NP", ["NP_SING", "NP_PL"]);
 $pcfg->addRule("N_SING", ["duckling", "piano", "cat", "spy", "robot", "cake"], [1, 1, 2, 4, 3, 2]);
 $pcfg->addRule("N_PL", ["ducklings", "pianos", "cats", "spies", "robots", "cakes"], [1, 1, 2, 4, 3, 2]);

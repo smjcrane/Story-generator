@@ -9,8 +9,17 @@ require Exporter;
 
 @EXPORT = qw(newRandom, describe, act_intransitively, act_transitively);
 
-$available_names = ["duck", "piano", "cat", "spy", "burglar", "firefighter"]; # bob is a robot, alice is not
-$all_attrs = [["purple", "green"], ["mean", "kind"], ["clever", "silly"], ["big", "little", "tiny"], ["happy", "bored"]];
+$available_names = ["duck", "piano", "cat", "spy", "burglar", "firefighter", "robot"];
+$all_attrs = [
+    ["unusual", "lovely", "beautiful"],  
+    ["big", "little", "tiny"], 
+    ["clever", "silly"],  
+    ["mean", "kind"],  
+    ["happy", "bored"], 
+    ["young", "ancient"], 
+    ["purple", "green"], 
+    ["metal", "wooden", "plastic"],
+];
 $all_intransitive_actions = ["laughs", "smiles", "studies", "dances", "snores", "hesitates", "does nothing"];
 $all_transitive_actions = ["likes", "hits", "jumps over", "surprises", "murders", "watches", "greets", "hugs", "forgives", "ignores", "eats", "pokes"];
 $forbidden_actions = {
@@ -49,11 +58,16 @@ sub newRandom {
     my $name = $available_names->[$index];
     splice(@$available_names, $index, 1);
     # get 2 orthogonal attrs
-    my $attr_1_index = int(rand((scalar @$all_attrs)/2));
+    my $attr_1_index = int(rand((scalar @$all_attrs)));
     my $attr_2_index = -1;
     do {
-        my $attr_2_index = int(rand((scalar @$all_attrs)/2));
+        $attr_2_index = int(rand((scalar @$all_attrs)));
     } while ($attr_1_index == $attr_2_index);
+    if ($attr_1_index > $attr_2_index){
+        my $temp = $attr_1_index;
+        $attr_1_index = $attr_2_index;
+        $attr_2_index = $temp;
+    }
     my $attr_1_options = $all_attrs->[$attr_1_index];
     my $attr1 = $attr_1_options->[int(rand(scalar @$attr_1_options))];
     my $attr_2_options = $all_attrs->[$attr_2_index];
@@ -70,6 +84,9 @@ sub describe {
     }
     $this->{"introduced"} = 1;
     my $attrs = $this->{"attrs"};
+    if ("@$attrs" =~ /^[aeiou]+/){
+        return "an @$attrs $name";
+    }
     return "a @$attrs $name";
 }
 
@@ -85,7 +102,7 @@ sub act_intransitively {
     }
     my $verb_index = int(rand(scalar @allowed));
     my $verb = @allowed[$verb_index];
-    return $verb;
+    return describe($this)." ".$verb;
 }
 
 sub act_transitively {
@@ -102,7 +119,7 @@ sub act_transitively {
     }
     my $verb_index = int(rand(scalar @allowed));
     my $verb = @allowed[$verb_index];
-    my $out = $verb." ".$object->describe();
+    my $out = describe($this)." ".$verb." ".describe($object);
     $object->update_attrs($effects->{$verb});
     my $adds = $effects->{$verb}->{"add"};
     if (scalar @$adds){
